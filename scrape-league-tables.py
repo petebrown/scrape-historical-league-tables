@@ -16,7 +16,7 @@ options.binary_location = "/Applications/Brave Browser.app/Contents/MacOS/Brave 
 
 driver = webdriver.Chrome(options=options, service=BraveService(ChromeDriverManager(chrome_type=ChromeType.BRAVE).install()))
 
-df = pd.read_csv("./results/output/results_df.csv", parse_dates=["game_date"])
+df = pd.read_csv("https://raw.githubusercontent.com/petebrown/update-results/main/data/results_df.csv", parse_dates=["game_date"])
 
 df['new_league_name'] = df.competition.str.lower().str.replace(" ", "-", regex=False).str.replace("(", "", regex=False).str.replace(")", "", regex=False)
 
@@ -40,10 +40,11 @@ for url in table_urls:
         df['index_no'] = df.index + 1
         df['url'] = url
         tables_df = pd.concat([tables_df, df])
-    except:
-        logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.DEBUG)
+    except Exception as e:
+        logging.basicConfig(filename='error.log', filemode="w", encoding='utf-8', format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
         logging.warning('Failed trying to scrape %s', url)
-     
+        logging.error('Encountered an issue: %s', e)
+         
 driver.quit()
 
 try:
